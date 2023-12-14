@@ -7,7 +7,8 @@
 
 import UIKit
 
-class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
+class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource, UITableViewDelegate, UITableViewDataSource, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout{
+    
     let datas = ["Option 1", "Option 2", "Option 3"]
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,13 +38,13 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         
         
         //UIPickerView
-        setUIPickerView()
+        //setUIPickerView()
         
         //UITableView
         //setUITableView()
         
         //UICollectionView
-        //setUICollectionView()
+        setUICollectionView()
     }
     
     
@@ -214,7 +215,73 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     }
     
     //MARK: - UITableView
+    func setUITableView() {
+        let tableView = UITableView()
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.frame = self.view.bounds //뷰 전체 바운즈로 설정
+        // 테이블 뷰에서 사용할 cell들을 등록.
+        // 테이블 뷰에서 사용할 셀은 UITableViewCell 클래스를 기반으로 하며, 식별자는 'Cell'이다"라고 선언하는 것입니다. 이렇게 등록된 셀은 나중에 dequeueReusableCell(withIdentifier:for:) 메서드를 호출할 때 사용됩니다.
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
+        // 해당 테이블 뷰를 ViewController의 SubView로 올려줍니다.
+        self.view.addSubview(tableView)
+    }
+    //UITableViewDataSource
+    // row 구성.
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return datas.count //요소의 수 만큼 행이 만들어짐.
+    }
+    
+    // cell 구성.
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+        cell.textLabel?.text = datas[indexPath.row]
+        return cell
+    }
+    
+    // UITableViewDelegate
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print("Selected: \(datas[indexPath.row])") // 어떤 셀이 선택됐는지 출력.
+        // 행을 선택할 때, 음영 적용
+        //tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
     
     //MARK: - UICollectionView
+    func setUICollectionView() {
+        //UICollectionView를 인스턴스 생성
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout:UICollectionViewFlowLayout())
+        
+        collectionView.frame = self.view.bounds //뷰 전체 바운즈로 설정
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        collectionView.backgroundColor = .white
+        // 테이블 뷰에서 사용할 cell들을 등록.
+        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "Cell")
+        view.addSubview(collectionView)
+    }
+    //UICollectionViewDataSource
+    // section의 수 만큼 아이템의 개수를 반환
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 10
+    }
+    // 컬렉션 뷰에 각각의 cell을 설정하고 반환.
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath)
+        cell.backgroundColor = .systemCyan
+        return cell
+    }
+    
+    //UICollectionViewDalegate
+    //아이템이 선택될 때 프린트 출력.
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        print("Selected: \(datas[indexPath.row])")
+        collectionView.deselectItem(at: indexPath, animated: true)
+    }
+    //UICollectionViewDelegateFlowLayout
+    //cell 크기 지정.
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 100, height: 100)
+    }
 }
 
